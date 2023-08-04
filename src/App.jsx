@@ -79,16 +79,15 @@ const SearchPokemon = ({
 
 //App Component
 function App() {
-  /*
-  This code initializes a state variable called 'pokemon' and a function called 'setPokemon' 
-  to update the state. The 'useStates' hook from React is used to create this state variable and
-  its initial value is set to an empty array '[]'
-  */
+  /* <<------ USE STATES ------>> */
   const [pokemonData, setPokemonData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchType, setSearchType] = useState("");
   const [searchSection, setSearchSection] = useState("name");
+  const [currentPage, setCurrentPage] = useState(1);
+  const cardsPerPage = 20;
 
+  //This is a list of Colors Property which matches the Pokemon Types.
   const typeColors = {
     normal: "#A8A77A",
     fire: "#EE8130",
@@ -110,10 +109,6 @@ function App() {
     fairy: "#D685AD",
   };
 
-  /* 
-  This code uses the 'useEffect' hook from React to fetch data from an external API
-  when the component mounts or updates
-  */
   const fetchData = async () => {
     try {
       const pokemonResponse = await axios.get(
@@ -141,25 +136,64 @@ function App() {
     }
   };
 
+    const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  /* 
+  <<------ USE EFFECTS ------>>
+  This code uses the 'useEffect' hook from React to fetch data from an external API
+  when the component mounts or updates
+  */
+
   useEffect(() => {
     fetchData();
   }, []);
 
+  /** <<------ PAGINATIONS FUNCTION ------>> **/
+  let currentPokemonCards = [];
+  let totalPages = 0;
   const filteredPokemon =
     pokemonData.length > 0
       ? pokemonData.filter((pokemon) => {
-          const nameMatch = pokemon.name
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase());
+          const nameMatch = pokemon.name.toLowerCase().includes(searchQuery.toLowerCase());
           const typeMatch = searchType
-            ? pokemon.types.some(
-                (type) =>
-                  type.type.name.toLowerCase() === searchType.toLowerCase()
-              )
+            ? pokemon.types.some((type) => type.type.name.toLowerCase() === searchType.toLowerCase())
             : true;
           return searchSection === "name" ? nameMatch : typeMatch;
         })
       : [];
+
+  if (filteredPokemon.length > 0) {
+    const indexOfLastCard = currentPage * cardsPerPage;
+    const indexOfFirstCard = indexOfLastCard - cardsPerPage;
+    currentPokemonCards = filteredPokemon.slice(indexOfFirstCard, indexOfLastCard);
+    totalPages = Math.ceil(filteredPokemon.length / cardsPerPage);
+  }
+
+  const renderPaginationButtons = () => {
+    const buttons = [];
+
+    for (let i = 1; i <= totalPages; i++) {
+      buttons.push(
+        <button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          className={`mx-2 px-3 py-1 ${
+            i === currentPage
+              ? "bg-blue-500 text-white"
+              : "bg-blue-200 text-black"
+          }`}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    return buttons;
+  };
+
+  /** <<------ SEARCH FUNCTION ------>> **/
 
   return (
     <div>
@@ -175,11 +209,12 @@ function App() {
         searchSection={searchSection}
         setSearchSection={setSearchSection}
       />
+
       <div className="flex flex-wrap justify-center">
-        {filteredPokemon.length === 0 ? (
+        {currentPokemonCards.length === 0 ? (
           <p> No pokemon Found, please try a different name! </p>
         ) : (
-          filteredPokemon.map((pokemon) => (
+          currentPokemonCards.map((pokemon) => (
             <div
               className="flex group h-[467px] w-[350px] max-w-sm m-[20px] overflow-hidden shadow-[0_1px_10px_0_rgba(0,0,0,0.8)]"
               key={pokemon.id}
@@ -243,17 +278,20 @@ function App() {
                     <br />
                     {/* Stats */}
                     <span className="text-[12pt] font-semibold text-black">
-                      {pokemon.stats[0].stat.name.toUpperCase()}: {pokemon.stats[0].base_stat}
+                      {pokemon.stats[0].stat.name.toUpperCase()}:{" "}
+                      {pokemon.stats[0].base_stat}
                     </span>
-                    <span>
-                      
-                    </span>
+                    <span></span>
                   </div>
                 </div>
               </div>
             </div>
           ))
         )}
+      </div>
+
+      <div className="flex justify-center mt-4">
+        {renderPaginationButtons()}
       </div>
     </div>
   );
