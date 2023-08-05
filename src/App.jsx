@@ -85,7 +85,11 @@ function App() {
   const [searchType, setSearchType] = useState("");
   const [searchSection, setSearchSection] = useState("name");
   const [currentPage, setCurrentPage] = useState(1);
-  const cardsPerPage = 20;
+  const cardsPerPage = 21;
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
   //This is a list of Colors Property which matches the Pokemon Types.
   const typeColors = {
@@ -136,29 +140,25 @@ function App() {
     }
   };
 
-    const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  /* 
-  <<------ USE EFFECTS ------>>
-  This code uses the 'useEffect' hook from React to fetch data from an external API
-  when the component mounts or updates
-  */
-
+  /* <<------ USE EFFECTS ------>> */
   useEffect(() => {
     fetchData();
   }, []);
 
-  /** <<------ PAGINATIONS FUNCTION ------>> **/
+  /** <<------ PAGINATIONS COMPONENT ------>> **/
   let currentPokemonCards = [];
   let totalPages = 0;
   const filteredPokemon =
     pokemonData.length > 0
       ? pokemonData.filter((pokemon) => {
-          const nameMatch = pokemon.name.toLowerCase().includes(searchQuery.toLowerCase());
+          const nameMatch = pokemon.name
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase());
           const typeMatch = searchType
-            ? pokemon.types.some((type) => type.type.name.toLowerCase() === searchType.toLowerCase())
+            ? pokemon.types.some(
+                (type) =>
+                  type.type.name.toLowerCase() === searchType.toLowerCase()
+              )
             : true;
           return searchSection === "name" ? nameMatch : typeMatch;
         })
@@ -167,7 +167,10 @@ function App() {
   if (filteredPokemon.length > 0) {
     const indexOfLastCard = currentPage * cardsPerPage;
     const indexOfFirstCard = indexOfLastCard - cardsPerPage;
-    currentPokemonCards = filteredPokemon.slice(indexOfFirstCard, indexOfLastCard);
+    currentPokemonCards = filteredPokemon.slice(
+      indexOfFirstCard,
+      indexOfLastCard
+    );
     totalPages = Math.ceil(filteredPokemon.length / cardsPerPage);
   }
 
@@ -193,105 +196,137 @@ function App() {
     return buttons;
   };
 
-  /** <<------ SEARCH FUNCTION ------>> **/
-
   return (
-    <div>
-      <h1 className="text-center mt-2 text-[32pt] font-bold">
-        Pokemon: Gotta Catch Em All
-      </h1>
+    <div className="bg-gray-300">
+      <div className="container relative m-auto">
+        <h1 className="text-center text-[32pt] font-bold">
+          Pokemon: Gotta Catch Em All
+        </h1>
 
-      <SearchPokemon
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        searchType={searchType}
-        setSearchType={setSearchType}
-        searchSection={searchSection}
-        setSearchSection={setSearchSection}
-      />
+        <SearchPokemon
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          searchType={searchType}
+          setSearchType={setSearchType}
+          searchSection={searchSection}
+          setSearchSection={setSearchSection}
+        />
 
-      <div className="flex flex-wrap justify-center">
-        {currentPokemonCards.length === 0 ? (
-          <p> No pokemon Found, please try a different name! </p>
-        ) : (
-          currentPokemonCards.map((pokemon) => (
-            <div
-              className="flex group h-[467px] w-[350px] max-w-sm m-[20px] overflow-hidden shadow-[0_1px_10px_0_rgba(0,0,0,0.8)]"
-              key={pokemon.id}
-            >
-              <div className="flex-col h-full w-full bg-red-300 transition-all duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
-                <div className="relative top-[10px] text-center">
-                  <h1 className="text-[20pt] font-bold">{pokemon.name}</h1>
+        <div className="flex flex-wrap justify-center">
+          {currentPokemonCards.length === 0 ? (
+            <p> No pokemon Found, please try a different name! </p>
+          ) : (
+            currentPokemonCards.map((pokemon) => (
+              <div
+                className="flex group h-[467px] w-[350px] max-w-sm m-[20px] overflow-hidden shadow-[0_1px_10px_0_rgba(0,0,0,0.1)]"
+                key={pokemon.id}
+              >
+                <div className="flex-col h-full w-full bg-gray-900 text-white transition-all duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateX(180deg)]">
+                  {/*Names */}
+                  <div className="relative text-center">
+                    <div className="bg-red-800 h-[60px] border-b-[10px] border-red-400">
+                      <h1 className="container relative top-[5px] text-[20pt] font-bold">
+                        {pokemon.name}
+                      </h1>
+                    </div>
 
-                  {/*Images */}
-                  <div className="flex relative justify-center top-[20px] h-[300px]">
-                    <img
-                      src={pokemon.sprites.other.dream_world.front_default}
-                      alt={pokemon.name}
-                    />
+                    {/*Images */}
+                    <div className="flex p-3 relative justify-center top-[10px] h-[300px]">
+                      <img
+                        src={pokemon.sprites.other.dream_world.front_default}
+                        alt={pokemon.name}
+                      />
+                    </div>
+
+                    {/* Pokemon Types */}
+                    <span className="inline-block relative top-[30px] text-sm font-semibold mr-2 mb-2">
+                      Types(s):{" "}
+                      {pokemon.types.map((type) => (
+                        <div
+                          key={type.type.name}
+                          style={{
+                            backgroundColor: typeColors[type.type.name],
+                          }}
+                          className="px-3 mx-1 inline-block rounded-[5%]"
+                        >
+                          <div className="">{type.type.name}</div>
+                        </div>
+                      ))}
+                    </span>
                   </div>
 
-                  {/* Pokemon Types */}
-                  <span className="inline-block relative top-[50px] text-sm font-semibold text-gray-700 mr-2 mb-2">
-                    Types(s):{" "}
-                    {pokemon.types.map((type) => (
-                      <div
-                        key={type.type.name}
-                        style={{
-                          backgroundColor: typeColors[type.type.name],
-                        }}
-                        className="px-3 mx-1 inline-block rounded-[5%] text-white"
-                      >
-                        <div className="">{type.type.name}</div>
+                  <div className="absolute inset-0 h-[467px] w-[350px] bg-gray-900 text-center [transform:rotateX(180deg)] [backface-visibility:hidden]">
+                    <div className="flex-col absolute right-0 left-0 top-[20px]">
+                      <div className="container relative m-auto w-[300px]">
+                        <p className="font-bold">Description:</p>
+
+                        {pokemon.speciesData.flavor_text_entries[9].language
+                          .name === "en" && (
+                          <li
+                            className="list-none text-justify"
+                            key={pokemon.speciesData.version}
+                          >
+                            {
+                              pokemon.speciesData.flavor_text_entries[9]
+                                .flavor_text
+                            }
+                          </li>
+                        )}
                       </div>
-                    ))}
-                  </span>
-                </div>
 
-                <div className="absolute inset-0 h-[467px] w-[350px] bg-green-600 text-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
-                  <div className="flex-col absolute right-0 left-0 top-[50px]">
-                    <div className="h-[100px] m-3">
-                      <p className="font-bold">Description:</p>
+                      {/* Abilities */}
+                      <div className="container relative m-auto top-[25px]">
+                      <span className="text-[12pt] font-semibold ">
+                        Abilities:
+                        <div className="gap-6 font-bold">
+                          {pokemon.abilities
+                            .map((abilities) => abilities.ability.name)
+                            .join(" | ")}
+                        </div>
+                      </span>
+                      </div>
 
-                      {pokemon.speciesData.flavor_text_entries[9].language
-                        .name === "en" && (
-                        <li
-                          className="list-none text-justify"
-                          key={pokemon.speciesData.version}
-                        >
-                          {
-                            pokemon.speciesData.flavor_text_entries[9]
-                              .flavor_text
-                          }
-                        </li>
-                      )}
+                      {/* Stats */}
+                      <div className="container relative m-auto top-[50px]">
+                        <h1 className="text-[12pt] font-bold">Stats: </h1>
+                        <div className="w-[250px] h-full flex  m-auto grid grid-cols-2 gap-2">
+                          <div className="text-justify">
+                            {pokemon.stats[0].stat.name.toUpperCase()}
+                          </div>
+                          <div className="text-right">
+                            {pokemon.stats[0].base_stat}
+                          </div>
+                          <div className="text-justify">
+                            {pokemon.stats[1].stat.name.toUpperCase()}
+                          </div>
+                          <div className="text-right">
+                            {pokemon.stats[1].base_stat}
+                          </div>
+                          <div className="text-justify">
+                            {pokemon.stats[2].stat.name.toUpperCase()}
+                          </div>
+                          <div className="text-right">
+                            {pokemon.stats[2].base_stat}
+                          </div>
+                          <div className="text-justify">
+                            {pokemon.stats[3].stat.name.toUpperCase()}
+                          </div>
+                          <div className="text-right">
+                            {pokemon.stats[3].base_stat}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    {/* Abilities */}
-                    <span className="text-[12pt] font-semibold text-black">
-                      Abilities:
-                      <div className="gap-6 font-bold">
-                        {pokemon.abilities
-                          .map((abilities) => abilities.ability.name)
-                          .join(" | ")}
-                      </div>
-                    </span>
-                    <br />
-                    {/* Stats */}
-                    <span className="text-[12pt] font-semibold text-black">
-                      {pokemon.stats[0].stat.name.toUpperCase()}:{" "}
-                      {pokemon.stats[0].base_stat}
-                    </span>
-                    <span></span>
                   </div>
                 </div>
               </div>
-            </div>
-          ))
-        )}
-      </div>
+            ))
+          )}
+        </div>
 
-      <div className="flex justify-center mt-4">
-        {renderPaginationButtons()}
+        <div className="flex relative justify-center bottom-3">
+          {renderPaginationButtons()}
+        </div>
       </div>
     </div>
   );
