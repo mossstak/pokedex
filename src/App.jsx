@@ -85,7 +85,7 @@ function App() {
   const [searchType, setSearchType] = useState("");
   const [searchSection, setSearchSection] = useState("name");
   const [currentPage, setCurrentPage] = useState(1);
-  const cardsPerPage = 21;
+  const cardsPerPage = 20;
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -182,7 +182,7 @@ function App() {
         <button
           key={i}
           onClick={() => handlePageChange(i)}
-          className={`mx-2 px-3 py-1 ${
+          className={`mx-2 mb-2 px-3 py-1 ${
             i === currentPage
               ? "bg-blue-500 text-white"
               : "bg-blue-200 text-black"
@@ -218,7 +218,7 @@ function App() {
           ) : (
             currentPokemonCards.map((pokemon) => (
               <div
-                className="flex group h-[467px] w-[350px] max-w-sm m-[20px] overflow-hidden shadow-[0_1px_10px_0_rgba(0,0,0,0.1)]"
+                className="flex group h-[467px] w-[300px] max-w-sm m-[20px] overflow-hidden shadow-[0_1px_10px_0_rgba(0,0,0,0.1)]"
                 key={pokemon.id}
               >
                 <div className="flex-col h-full w-full bg-gray-900 text-white transition-all duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateX(180deg)]">
@@ -231,8 +231,9 @@ function App() {
                     </div>
 
                     {/*Images */}
-                    <div className="flex p-3 relative justify-center top-[10px] h-[300px]">
+                    <div className="flex relative m-auto top-[20px] w-full h-full">
                       <img
+                        className="container relative m-auto w-[300px] h-[300px]"
                         src={pokemon.sprites.other.dream_world.front_default}
                         alt={pokemon.name}
                       />
@@ -255,9 +256,9 @@ function App() {
                     </span>
                   </div>
 
-                  <div className="absolute inset-0 h-[467px] w-[350px] bg-gray-900 text-center [transform:rotateX(180deg)] [backface-visibility:hidden]">
-                    <div className="flex-col absolute right-0 left-0 top-[20px]">
-                      <div className="container relative m-auto w-[300px]">
+                  <div className="absolute inset-0 bg-gray-900 text-center [transform:rotateX(180deg)] [backface-visibility:hidden]">
+                    <div className="container relative m-auto top-[40px]">
+                      <div className="m-auto w-[200px]">
                         <p className="font-bold">Description:</p>
 
                         {pokemon.speciesData.flavor_text_entries[9].language
@@ -276,42 +277,42 @@ function App() {
 
                       {/* Abilities */}
                       <div className="container relative m-auto top-[25px]">
-                      <span className="text-[12pt] font-semibold ">
-                        Abilities:
-                        <div className="gap-6 font-bold">
-                          {pokemon.abilities
-                            .map((abilities) => abilities.ability.name)
-                            .join(" | ")}
-                        </div>
-                      </span>
+                        <span className="text-[12pt] font-semibold ">
+                          Abilities:
+                          <div className="gap-6 font-bold">
+                            {pokemon.abilities
+                              .map((abilities) => abilities.ability.name)
+                              .join(" | ")}
+                          </div>
+                        </span>
                       </div>
 
                       {/* Stats */}
                       <div className="container relative m-auto top-[50px]">
                         <h1 className="text-[12pt] font-bold">Stats: </h1>
-                        <div className="w-[250px] h-full flex  m-auto grid grid-cols-2 gap-2">
+                        <div className="container relative mx-[60px] grid grid-cols-2 gap-2">
                           <div className="text-justify">
                             {pokemon.stats[0].stat.name.toUpperCase()}
                           </div>
-                          <div className="text-right">
+                          <div className="text-justify">
                             {pokemon.stats[0].base_stat}
                           </div>
                           <div className="text-justify">
                             {pokemon.stats[1].stat.name.toUpperCase()}
                           </div>
-                          <div className="text-right">
+                          <div className="text-justify">
                             {pokemon.stats[1].base_stat}
                           </div>
                           <div className="text-justify">
                             {pokemon.stats[2].stat.name.toUpperCase()}
                           </div>
-                          <div className="text-right">
+                          <div className="text-justify">
                             {pokemon.stats[2].base_stat}
                           </div>
                           <div className="text-justify">
                             {pokemon.stats[3].stat.name.toUpperCase()}
                           </div>
-                          <div className="text-right">
+                          <div className="text-justify">
                             {pokemon.stats[3].base_stat}
                           </div>
                         </div>
@@ -324,7 +325,7 @@ function App() {
           )}
         </div>
 
-        <div className="flex relative justify-center bottom-3">
+        <div className="flex flex-wrap justify-center container relative m-auto md:w-full">
           {renderPaginationButtons()}
         </div>
       </div>
