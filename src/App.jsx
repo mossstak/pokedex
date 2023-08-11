@@ -116,7 +116,7 @@ function App() {
   const fetchData = async () => {
     try {
       const pokemonResponse = await axios.get(
-        "https://pokeapi.co/api/v2/pokemon?limit=302"
+        "https://pokeapi.co/api/v2/pokemon?limit=151 "
       );
       const pokemonData = pokemonResponse.data.results;
 
@@ -140,9 +140,25 @@ function App() {
     }
   };
 
+  const handleScroll = () => {
+    const scrollY = window.scrollY;
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+
+    if (scrollY + windowHeight >= documentHeight - 100){
+      //load more data
+      const nextPage = currentPage + 1;
+      if(nextPage <= totalPages){
+        setCurrentPage(nextPage);
+      }
+    }
+  }
+
   /* <<------ USE EFFECTS ------>> */
   useEffect(() => {
     fetchData();
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   /** <<------ PAGINATIONS COMPONENT ------>> **/
