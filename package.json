@@ -12,7 +12,8 @@
     "@material-tailwind/react": "^1.4.2",
     "axios": "^1.3.5",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.27",
