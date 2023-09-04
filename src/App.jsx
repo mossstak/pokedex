@@ -120,7 +120,7 @@ const App = () => {
     <div>
       {loading ? (
         <div className="container m-auto mb-3">
-          <h1 className="text-center">Pokemon Gotta Catch Em All</h1>
+          <h1 className="text-center text-[32pt] font-bold">Pokemon Gotta Catch Em All</h1>
 
           <PokeList pokemonlist={pokemon} />
 
