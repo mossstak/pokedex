@@ -32,15 +32,12 @@ export const PokemonCards = ({ name, image, types, height, weight }) => {
   const [flavorTextEntries, setFlavorTextEntries] = useState("");
 
   useEffect(() => {
-    // Define the URL for the species data using the Pokemon name.
     const speciesUrl = `https://pokeapi.co/api/v2/pokemon-species/${name}/`;
 
-    // Make the Axios GET request to fetch the species data.
     axios
       .get(speciesUrl)
       .then((response) => {
-        // Update the state with the fetched species data.
-        setSpecies(response.data);
+        console.log(response.data);
 
         const entry =
           response.data.flavor_text_entries[9]?.flavor_text || "Not available";
