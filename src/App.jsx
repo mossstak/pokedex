@@ -31,18 +31,21 @@ function App() {
   return (
     <div className="container m-auto p-3">
       {loading ? (
-        <div className="p-3 grid-cols-3 sm:grid md:grid-cols-3">
-          {pokemon.map((pokemon) => (
-            <PokemonCards
-              key={uuidv4()}
-              name={pokemon.data.name}
-              image={pokemon.data.sprites.other.dream_world.front_default}
-              types={pokemon.data.types}
-              speciesData={pokemon.data.species}
-              weight={pokemon.data.weight}
-              height={pokemon.data.height}
-            />
-          ))}
+        <div>
+          <h1 className="text-[32pt] font-bold text-center">Pokedex: Gotta Catch Em All</h1>
+          <div className="p-3 grid-cols-3 sm:grid md:grid-cols-3">
+            {pokemon.map((pokemon) => (
+              <PokemonCards
+                key={uuidv4()}
+                name={pokemon.data.name}
+                image={pokemon.data.sprites.other.dream_world.front_default}
+                types={pokemon.data.types}
+                speciesData={pokemon.data.species}
+                weight={pokemon.data.weight}
+                height={pokemon.data.height}
+              />
+            ))}
+          </div>
         </div>
       ) : (
         <div>
