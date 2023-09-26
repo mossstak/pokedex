@@ -4,4 +4,4 @@ This is pokedex react app using a tutorial which i followed. It has taught me a 
 
 my application is run on vite js so if you'd like to run the application please type in your command line, <p ><strong>npm run dev</strong></p>
 
-![Pokedex-Display-Picture](https://github.com/mossstak/pokedex/assets/57457446/bf88d82e-c51e-49ad-a724-18b508b63d39)
+![Pokedex-Display-Picture](https://github.com/mossstak/pokedex/assets/57457446/228040a6-2735-43f8-8f3c-ea4d9ad9a6b2)
