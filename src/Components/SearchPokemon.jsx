@@ -7,7 +7,7 @@ export const SearchPokemon = ({ value, onChange, onClick, placeholder }) => {
   return (
     <div className="flex gap-3 justify-center">
       <input
-        className="md:w-[500px] h-[50px] border border-red-600"
+        className="md:w-[500px] h-[50px] p-3 border border-red-600"
         type="text"
         placeholder={inputPlaceholder}
         value={value}
