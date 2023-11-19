@@ -211,7 +211,7 @@ function App() {
             </div>
           </div>
 
-          <div className="mb-3">
+          <div className="mb-3 w-[600px]">
             {/* Description */}
             <div className="text-justify">
               <p className="font-bold text-center text-[2em]">Description: </p>
@@ -257,7 +257,7 @@ function App() {
           </div>
 
           {/* Evolution Chain */}
-          <div>
+          <div className='mb-[25px]'>
             <h3 className="font-bold text-center text-[2em]">
               Evolution Chain:
             </h3>
