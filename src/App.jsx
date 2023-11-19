@@ -1,115 +1,292 @@
-/* eslint-disable no-unused-vars */
-import { React, useEffect, useState } from 'react'
-import { PokemonCards } from './Components/PokemonCards'
-import { SearchPokemon } from './Components/SearchPokemon'
-import axios from 'axios'
-import { v4 as uuidv4 } from 'uuid'
+import React, { useEffect, useState } from 'react'
+import API from './utils/api'
 import './App.css'
 
 function App() {
   const [pokemon, setPokemon] = useState([])
-  const [searchPokemon, setSearchPokemon] = useState('')
-  const [filteredPokemon, setFilteredPokemon] = useState([])
-  const [loading, setLoading] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(0)
+  const [selectedPokemon, setSelectedPokemon] = useState()
+  const pokemonPerPage = 20
+  const typeColors = {
+    normal: '#A8A77A',
+    fire: '#EE8130',
+    water: '#6390F0',
+    electric: '#F7D02C',
+    grass: '#7AC74C',
+    ice: '#96D9D6',
+    fighting: '#C22E28',
+    poison: '#A33EA1',
+    ground: '#E2BF65',
+    flying: '#A98FF3',
+    psychic: '#F95587',
+    bug: '#A6B91A',
+    rock: '#B6A136',
+    ghost: '#735797',
+    dragon: '#6F35FC',
+    dark: '#705746',
+    steel: '#B7B7CE',
+    fairy: '#D685AD',
+  }
 
-  useEffect(() => {
-    fetchPokeData()
-  }, [])
+  const fetchPokemon = async () => {
+    const response = await API.get(
+      `/pokemon?limit=${pokemonPerPage}&offset=${
+        (currentPage - 1) * pokemonPerPage
+      }`
+    )
+    const fetchedPokemon = response.data.results
 
-  const fetchPokeData = async () => {
-    let endpoints = []
-    for (let i = 1; i < 151; i++) {
-      endpoints.push(`https://pokeapi.co/api/v2/pokemon/${i}`)
-    }
+    // Fetch detailed data for each Pokemon
+    const detailedPokemonData = await Promise.all(
+      fetchedPokemon.map(async (p) => {
+        const individualPokemonResponse = await API.get(p.url)
+        const individualPokemon = individualPokemonResponse.data
 
-    try {
-      let res = await axios.all(
-        endpoints.map((endpoint) => axios.get(endpoint))
-      )
+        const types = individualPokemon.types.map((type) => type.type.name)
 
-      //fetch species data for each pokemon
-      const speciesPromises = res.map((pokemon) =>
-        axios.get(pokemon.data.species.url)
-      )
-      const speciesData = await axios.all(speciesPromises)
+        // Fetch species data
+        const speciesResponse = await API.get(individualPokemon.species.url)
+        const speciesData = speciesResponse.data
 
-      //combine Pokemon data with species data
-      const combinedData = res.map((pokemon, index) => {
+        // Fetch evolution data
+        let evolutionData = null
+        if (speciesData.evolution_chain) {
+          const evolutionResponse = await API.get(
+            speciesData.evolution_chain.url
+          )
+          evolutionData = evolutionResponse.data
+        }
+
         return {
-          ...pokemon,
-          species: speciesData[index].data,
+          ...individualPokemon,
+          types,
+          species: speciesData,
+          evolution: evolutionData,
         }
       })
-      setPokemon(combinedData)
-      setFilteredPokemon(combinedData)
-      setLoading(true)
-      console.log(combinedData)
+    )
+
+    setPokemon(detailedPokemonData)
+    console.log(detailedPokemonData)
+    setTotalPages(Math.ceil(response.data.count / pokemonPerPage))
+  }
+
+  useEffect(() => {
+    fetchPokemon()
+  }, [currentPage])
+
+  const goToNextPage = () => {
+    setCurrentPage(currentPage + 1)
+  }
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1)
+    }
+  }
+
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1)
+  }
+
+  const pokeDescription = async (pokemonId) => {
+    try {
+      // Fetch the basic details of the selected Pokemon
+      const response = await API.get(`/pokemon/${pokemonId}`)
+      const pokemonDetails = response.data
+
+      // Fetch species data
+      const speciesResponse = await API.get(pokemonDetails.species.url)
+      const speciesData = speciesResponse.data
+
+      // Fetch evolution data
+      let evolutionData = null
+      if (speciesData.evolution_chain) {
+        const evolutionResponse = await API.get(speciesData.evolution_chain.url)
+        evolutionData = evolutionResponse.data
+      }
+
+      // Set the state with all the fetched data
+      setSelectedPokemon({
+        ...pokemonDetails,
+        species: speciesData,
+        evolution: evolutionData,
+      })
     } catch (error) {
-      console.error('Failed to fetch pokemons:', error)
+      console.error('Error fetching details:', error)
+      // Handle the error as appropriate
     }
   }
 
-  const handleSearch = () => {
-    if (searchPokemon === '') {
-      setFilteredPokemon(pokemon)
-    } else {
-      setFilteredPokemon(
-        pokemon.filter((pokemon) =>
-          pokemon.data.name.toLowerCase().includes(searchPokemon.toLowerCase())
-        )
-      )
-    }
-  }
+  function getEvolutionChain(evolutionData) {
+    let chain = []
+    let currentStage = evolutionData.chain
 
-  const resetPokemon = () => {
-    setFilteredPokemon(pokemon)
+    // Loop through the evolution chain
+    while (currentStage) {
+      chain.push(currentStage.species.name)
+      currentStage = currentStage.evolves_to[0] // Move to the next stage
+    }
+
+    return chain
   }
 
   return (
-    <div className="container m-auto p-3">
-      {loading ? (
+    <div className="flex flex-col m-3 justify-center items-center">
+      <h1 className="text-[3rem] text-center">Pokemon!</h1>
+      {!selectedPokemon && (
         <div>
-          <h1 className="text-[32pt] font-bold text-center">
-            Pokedex: Gotta Catch Em All
-          </h1>
-          <div className="flex gap-3 justify-center px-5">
-            <SearchPokemon
-              placeholder="search Pokemon Here"
-              onChange={(e) => setSearchPokemon(e.target.value)}
-              value={searchPokemon}
-              onClick={handleSearch}
-            />
+          <div className="grid-cols-3 sm:grid md:grid-cols-4 p-3 gap-[120px]">
+            {pokemon.map((pokeman) => (
+              <div
+                className="flex justify-center items-center"
+                key={pokeman.id}
+              >
+                <button
+                  onClick={() => pokeDescription(pokeman.id)}
+                  className="flex-col gap-3 justify-center items-center pointer bg-red-300 hover:bg-red-600 h-[400px] w-[300px] p-1"
+                >
+                  <div className="flex gap-3 justify-center items-center">
+                    <p className="font-bold text-[30px]">
+                      {capitalizeFirstLetter(pokeman.name)}
+                    </p>
+                    <p className="text-[30px] text-justify">{pokeman.id}</p>
+                  </div>
+                  <img
+                    className="w-[240px] h-[280px]"
+                    src={pokeman.sprites.other.dream_world.front_default}
+                  />
+
+                  <div className="flex justify-center gap-3">
+                    {pokeman.types.map((type) => {
+                      return (
+                        <span
+                          key={type}
+                          className="p-1 w-[80px] rounded-xl relative top-[10px]"
+                          style={{ backgroundColor: typeColors[type] }}
+                        >
+                          {capitalizeFirstLetter(type)}
+                        </span>
+                      )
+                    })}
+                  </div>
+                </button>
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-center mt-4 w-full gap-3">
             <button
-              className="p-3 w-[100px] hover:bg-red-800 hover:text-white hover:transition: border border-red-600"
-              onClick={resetPokemon}
+              className="h-[50px] w-[100px] p-3 text-white bg-red-600"
+              onClick={goToPreviousPage}
+              disabled={currentPage === 1}
             >
-              Reset
+              Previous
+            </button>
+            <button
+              className="h-[50px] w-[100px] p-3 text-white bg-red-600"
+              onClick={goToNextPage}
+              disabled={currentPage === totalPages}
+            >
+              Next
             </button>
           </div>
-          <div className="p-3 grid-cols-3 sm:grid md:grid-cols-3">
-            {filteredPokemon.map((pokemon) => {
-              const types = pokemon.data.types.map((type) => type.type.name)
-              return (
-                <PokemonCards
-                  key={uuidv4()}
-                  name={pokemon.data.name}
-                  src={pokemon.data.sprites.other.dream_world.front_default}
-                  types={types}
-                  description={
-                    pokemon.species.flavor_text_entries.filter(
-                      (entry) => entry.language.name === 'en'
-                    )[9].flavor_text
-                  }
-                  weight={pokemon.data.weight}
-                  height={pokemon.data.height}
-                />
-              )
-            })}
-          </div>
         </div>
-      ) : (
-        <div>
-          <p>LOADING ...</p>
+      )}
+
+      {selectedPokemon && (
+        <div className="flex flex-col justify-center items-center bg-red-300 p-3 w-[800px]">
+          <div className="mb-3">
+            {/* Pokemon Name */}
+            <div className="flex gap-[150px]">
+              <p className="text-center font-bold text-[2em] w-[600px] mt-3">
+                {capitalizeFirstLetter(selectedPokemon.name)}
+              </p>
+            </div>
+
+            {/* Pokemon Image */}
+            <div className="flex justify-center gap-[150px]">
+              <img src={selectedPokemon.sprites.front_default} />
+              <img src={selectedPokemon.sprites.back_default} />
+            </div>
+          </div>
+
+          <div className="mb-3">
+            {/* Description */}
+            <div className="text-justify">
+              <p className="font-bold text-center text-[2em]">Description: </p>
+              {selectedPokemon.species.flavor_text_entries[9].flavor_text}
+            </div>
+
+            {/* stats */}
+            <p className="font-bold text-[2em] text-center">Stats</p>
+            {selectedPokemon.stats.slice(0, 5).map((stat, index) => (
+              <span
+                key={index}
+                className="flex justify-between gap-[100px] mt-3"
+              >
+                <p className="font-bold">{stat.stat.name}:</p>
+                <p>{stat.base_stat}</p>
+              </span>
+            ))}
+          </div>
+
+          <div className="mb-3 flex flex-col items-center">
+            {/* Abilities */}
+            <span className="font-bold text-[2em]">Abilities: </span>
+            <p className="flex gap-3 mb-3">
+              {selectedPokemon.abilities.map((ability, index) => (
+                <span key={index} className=" bg-green-300 py-2 px-6">
+                  {capitalizeFirstLetter(ability.ability.name)}
+                </span>
+              ))}
+            </p>
+
+            {/* Moves */}
+            <h1 className="text-[2em] font-bold">Moves</h1>
+            <div className="grid-cols-2 sm:grid md:grid-cols-2 p-3 gap-[30px]">
+              {selectedPokemon.moves.slice(0, 4).map((move, index) => (
+                <span
+                  key={index}
+                  className="bg-gray-300 p-3 text-center rounded-3xl"
+                >
+                  {capitalizeFirstLetter(move.move.name)}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Evolution Chain */}
+          <div>
+            <h3 className="font-bold text-center text-[2em]">
+              Evolution Chain:
+            </h3>
+            {selectedPokemon.evolution ? (
+              <div className="flex gap-3 items-center justify-center">
+                {getEvolutionChain(selectedPokemon.evolution).map(
+                  (speciesName, index, array) => (
+                    <React.Fragment key={index}>
+                      <span>{speciesName}</span>
+                      {index < array.length - 1 && (
+                        <span className="mx-2">→</span>
+                      )}
+                    </React.Fragment>
+                  )
+                )}
+              </div>
+            ) : (
+              <p>This Pokémon does not evolve.</p>
+            )}
+          </div>
+
+          <button
+            className=" bg-red-400 h-[50px] px-[40px] hover:bg-red-500"
+            onClick={() => {
+              setSelectedPokemon(null)
+            }}
+          >
+            Close
+          </button>
         </div>
       )}
     </div>
