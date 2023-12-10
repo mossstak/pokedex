@@ -133,8 +133,9 @@ function App() {
   }
 
   return (
-    <div className="flex flex-col m-3 justify-center items-center">
+    <div className="flex flex-col container m-auto justify-center items-center">
       <h1 className="text-[3rem] text-center">Pokemon!</h1>
+      <p>Gotta Catch em All! </p>
       {!selectedPokemon && (
         <div>
           <div className="grid-cols-3 sm:grid md:grid-cols-4 p-3 gap-[120px]">
@@ -222,7 +223,7 @@ function App() {
             <p className="font-bold text-[2em] text-center">Stats</p>
             {selectedPokemon.stats.slice(0, 5).map((stat, index) => (
               <span
-                key={index}
+                key={stat.stat.id}
                 className="flex justify-between gap-[100px] mt-3"
               >
                 <p className="font-bold">{stat.stat.name}:</p>
@@ -235,8 +236,8 @@ function App() {
             {/* Abilities */}
             <span className="font-bold text-[2em]">Abilities: </span>
             <p className="flex gap-3 mb-3">
-              {selectedPokemon.abilities.map((ability, index) => (
-                <span key={index} className=" bg-green-300 py-2 px-6">
+              {selectedPokemon.abilities.map((ability) => (
+                <span key={ability.ability.id} className=" bg-green-300 py-2 px-6">
                   {capitalizeFirstLetter(ability.ability.name)}
                 </span>
               ))}
@@ -245,9 +246,9 @@ function App() {
             {/* Moves */}
             <h1 className="text-[2em] font-bold">Moves</h1>
             <div className="grid-cols-2 sm:grid md:grid-cols-2 p-3 gap-[30px]">
-              {selectedPokemon.moves.slice(0, 4).map((move, index) => (
+              {selectedPokemon.moves.slice(0, 4).map((move) => (
                 <span
-                  key={index}
+                  key={move.move.id}
                   className="bg-gray-300 p-3 text-center rounded-3xl"
                 >
                   {capitalizeFirstLetter(move.move.name)}
@@ -265,7 +266,7 @@ function App() {
               <div className="flex gap-3 items-center justify-center">
                 {getEvolutionChain(selectedPokemon.evolution).map(
                   (speciesName, index, array) => (
-                    <React.Fragment key={index}>
+                    <React.Fragment key={speciesName.id}>
                       <span>{speciesName}</span>
                       {index < array.length - 1 && (
                         <span className="mx-2">→</span>
