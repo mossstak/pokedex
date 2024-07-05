@@ -138,7 +138,7 @@ function App() {
       <p>Gotta Catch em All! </p>
       {!selectedPokemon && (
         <div>
-          <div className="grid-cols-3 sm:grid md:grid-cols-4 p-3 gap-[120px]">
+          <div className="grid-cols-3 sm:grid space-y-3 md:grid-cols-4 p-3 gap-[120px]">
             {pokemon.map((pokeman) => (
               <div
                 className="flex justify-center items-center"
