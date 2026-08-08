@@ -1,8 +1,113 @@
-<h1 align="center">Pokedex</h1>
+<h1 align="center">
+  <br>
+  <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png" alt="Pokeball" width="60">
+  <br>
+  Pokédex Explorer
+  <br>
+</h1>
 
-This is pokedex react app using a tutorial which i followed. It has taught me a lot more about React Hooks such as usestates, useEffects. It has also taught me the different between fetch data and axios which on this app it has only axios used. I would still like to make some more changes, maybe add other variables such as the evolution data like the images, different tabs of the generation for each pokemon this way, they can be easily found and has less loading time.
+<h4 align="center">A high-performance, interactive Pokédex built with React, Vite, Tailwind CSS, and PokeAPI.</h4>
 
-my application is run on vite js so if you'd like to run the application please type in your command line, <p ><strong>npm run dev</strong></p>
+<p align="center">
+  <a href="#key-features">Key Features</a> •
+  <a href="#tech-stack">Tech Stack</a> •
+  <a href="#project-structure">Project Structure</a> •
+  <a href="#getting-started">Getting Started</a> •
+  <a href="#screenshots">Screenshots</a>
+</p>
 
-![Screenshot 2023-11-19 224212](https://github.com/mossstak/pokedex/assets/57457446/1b1e72da-6fdb-4e9b-918a-7ebf9b581bea)
-![Screenshot 2023-11-19 224710](https://github.com/mossstak/pokedex/assets/57457446/cab5ac6f-27b5-43e6-a096-2aca14001041)
+---
+
+## ⚡ Overview
+
+**Pokédex Explorer** is a modern, high-performance web application for browsing Pokémon stats, element types, abilities, movesets, and interactive evolution paths in real time.
+
+Originally built to practice React hooks and Axios, this application has been optimized to handle data gracefully with **on-demand fetching**, **glassmorphism styling**, **dynamic type gradients**, and **shimmer loading skeletons**.
+
+---
+
+## ✨ Key Features
+
+- 🔍 **Real-Time Search & Direct Lookup:** Search Pokémon by name or ID (e.g., `#0025` or `Pikachu`) with instant response.
+- ⚡ **Elemental Type Filtering:** Filter Pokémon by element type (Fire, Water, Grass, Electric, Psychic, Dragon, etc.).
+- 📊 **Visual Base Stat Progress Meters:** Color-coded stat bars showing HP, Attack, Defense, Special Attack, Special Defense, and Speed (out of 255 max base stat).
+- 🧬 **Interactive Evolution Tree:** Recursively renders evolution stages with high-res artwork thumbnails and evolution requirement badges.
+- 🚀 **Optimized API Performance:** Solved the N+1 fetching problem by loading full species and evolution details on-demand when inspecting a Pokémon.
+- 🎨 **Dynamic Type Aesthetic:** Custom glassmorphic cards and modal overlays with gradients dynamically tailored to primary Pokémon types.
+- 📱 **Fully Responsive Layout:** Optimized for mobile, tablet, and desktop screens with seamless pagination controls.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Framework:** [React 18](https://react.dev/)
+- **Build Tool:** [Vite](https://vitejs.dev/)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/) + Custom Glassmorphism & Animations
+- **HTTP Client:** [Axios](https://axios-http.com/)
+- **API Source:** [PokeAPI v2](https://pokeapi.co/)
+- **Typography:** Google Fonts (*Outfit* & *Plus Jakarta Sans*)
+
+---
+
+## 📁 Project Structure
+
+```
+pokedex/
+├── public/
+├── src/
+│   ├── components/
+│   │   ├── EvolutionChain.jsx     # Interactive evolution tree component
+│   │   ├── FilterBar.jsx          # Search bar, type filter pills, and sorting dropdown
+│   │   ├── LoadingSkeleton.jsx    # Shimmer placeholder skeleton card loader
+│   │   ├── Pagination.jsx         # Page navigation controls & indicators
+│   │   ├── PokemonCard.jsx        # Grid card with type gradient & hover effects
+│   │   ├── PokemonDetailModal.jsx # Detailed modal with About, Stats, Evolution & Moves
+│   │   └── StatBar.jsx            # Animated base stat progress bar
+│   ├── utils/
+│   │   ├── api.jsx                # Axios API instance configuration
+│   │   └── pokemonHelpers.js      # Type colors, image fallbacks, and text formatting helpers
+│   ├── App.jsx                    # Main application orchestration & state
+│   ├── App.css                    # Tailwind directives & glassmorphism styling
+│   └── main.jsx                   # React root mount point
+├── index.html                     # HTML head with Google Fonts & SEO meta tags
+├── package.json                   # Project dependencies & scripts
+└── tailwind.config.js             # Tailwind configuration
+```
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+Ensure you have [Node.js](https://nodejs.org/) (version 16 or higher) installed on your machine.
+
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/mossstak/pokedex.git
+   cd pokedex
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
+
+4. **Build for production:**
+   ```bash
+   npm run build
+   ```
+
+---
+
+## 📸 Screenshots
+
+![Grid View](https://github.com/mossstak/pokedex/assets/57457446/1b1e72da-6fdb-4e9b-918a-7ebf9b581bea)
+![Detail View](https://github.com/mossstak/pokedex/assets/57457446/cab5ac6f-27b5-43e6-a096-2aca14001041)
