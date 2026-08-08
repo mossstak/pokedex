@@ -110,8 +110,8 @@ Ensure you have [Node.js](https://nodejs.org/) (version 16 or higher) installed 
 ## 📸 Screenshots
 
 ### Grid Dashboard & Element Filters
-![Grid Dashboard](./public/screenshots/grid_view.jpg)
+<!-- ![Grid Dashboard](./public/screenshots/grid_view.jpg) -->
 
 ### Detailed View, Base Stats & Evolution Chain
-![Detail Modal & Evolution](./public/screenshots/detail_view.jpg)
+<!-- ![Detail Modal & Evolution](./public/screenshots/detail_view.jpg) -->
 
