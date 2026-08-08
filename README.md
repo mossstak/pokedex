@@ -109,5 +109,9 @@ Ensure you have [Node.js](https://nodejs.org/) (version 16 or higher) installed 
 
 ## 📸 Screenshots
 
-![Grid View](https://github.com/mossstak/pokedex/assets/57457446/1b1e72da-6fdb-4e9b-918a-7ebf9b581bea)
-![Detail View](https://github.com/mossstak/pokedex/assets/57457446/cab5ac6f-27b5-43e6-a096-2aca14001041)
+### Grid Dashboard & Element Filters
+![Grid Dashboard](./public/screenshots/grid_view.jpg)
+
+### Detailed View, Base Stats & Evolution Chain
+![Detail Modal & Evolution](./public/screenshots/detail_view.jpg)
+
